@@ -1,0 +1,62 @@
+
+1.Import Library and load the dataset 
+import numpy as np 
+import pandas as pd 
+ds = pd.read_csv('/content/play_data.csv - play_data.csv.csv',decimal=' ,'); 
+ds 
+
+2. Look at some general information from the data to find out the  characteristics of the data in general. 
+ds.info() 
+ds.shape 
+ds.head(5)
+
+ds.tail(5) 
+ds.describe 
+
+3. Correlation between features and Exploratory Data Analysis ds.corr().style.background_gradient().set_precision(2)
+import seaborn as sns 
+sns.countplot(ds['play'], color='red') 
+
+4.Pre-processing our data  
+X=ds.iloc[:,1:5] 
+Y=ds.iloc[:,5] 
+from sklearn.preprocessing import LabelEncoder 
+le=LabelEncoder() 
+ds["outlook"]=le.fit_transform(ds["outlook"].astype(str)) ds["temp"]=le.fit_transform(ds["temp"].astype(str)) 
+ds["humidity"]=le.fit_transform(ds["humidity"].astype(str)) ds["wind"]=le.fit_transform(ds["wind"].astype(str)) 
+X
+
+For Noisy dataset
+
+zeroes_not_allow = ['zn' , 'chas']
+for cols in zeroes_not_allow:
+	ds[cols] = ds[cols].replace(0,np.nan)
+	mean = int(ds[cols].mean())
+	ds[cols] = ds[cols].replace(np.nan,mean)
+
+ds.head()
+
+5.Training and testing of data + split into train and test 
+from sklearn.model_selection import train_test_split 
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,random_state=0,test_ size=0.3) 
+ds.head() 
+
+6. Modelling our data with Gaussian Naive Bayes from Scikit-Learn
+from sklearn.naive_bayes import GaussianNB 
+from sklearn.preprocessing import StandardScaler 
+sc_X=StandardScaler() 
+
+X_train=sc_X.fit_transform(X_train) 
+X_test=sc_X.transform(X_test) 
+cls = GaussianNB() 
+cls.fit(X_train,Y_train) 
+
+
+7.Confusion matrix of data and Cheacking Accuracy of model 
+y_pred=cls.predict(X_test) 
+y_pred 
+from sklearn.metrics import confusion_matrix 
+cm=confusion_matrix(Y_test,y_pred) 
+cm 
+from sklearn.metrics import accuracy_score 
+print(accuracy_score(Y_test,y_pred))
